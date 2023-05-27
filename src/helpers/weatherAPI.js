@@ -41,3 +41,26 @@ export const searchCities = async (term) => {
       return error.message;
     });
 };
+
+const DAY = 7;
+
+export const btnModal = async (urlCidade) => {
+  return fetch(`http://api.weatherapi.com/v1/forecast.json?lang=pt&key=${TOKEN}&q=${urlCidade}&days=${DAY}`)
+    .then((response) => response.json())
+    .then((data) => {
+      const arrForecast = data.forecast.forecastday;
+      return arrForecast.map((objForecast) => {
+        const obj = {
+          date: objForecast.date,
+          maxTemp: objForecast.day.maxtemp_c,
+          minTemp: objForecast.day.mintemp_c,
+          condition: objForecast.day.condition.text,
+          icon: objForecast.day.condition.icon,
+        };
+        return obj;
+      });
+    })
+    .catch((error) => {
+      return error.message;
+    });
+};

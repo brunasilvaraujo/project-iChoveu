@@ -1,4 +1,4 @@
-import { getWeatherByCity, searchCities } from './weatherAPI';
+import { getWeatherByCity, searchCities, btnModal } from './weatherAPI';
 
 /**
  * Cria um elemento HTML com as informações passadas
@@ -73,6 +73,10 @@ export function showForecast(forecastList) {
   forecastContainer.classList.remove('hidden');
 }
 
+const previsao = async (event) => {
+  const arrForecast = await btnModal(event.target.id);
+  showForecast(arrForecast);
+};
 /**
  * Recebe um objeto com as informações de uma cidade e retorna um elemento HTML
  */
@@ -103,10 +107,12 @@ export function createCityElement(cityInfo) {
 
   const btnElement = createElement('button', 'city-forecast-button', 'Ver previsão');
   btnElement.id = url;
+  btnElement.addEventListener('click', previsao);
 
   cityElement.appendChild(headingElement);
   cityElement.appendChild(infoContainer);
   cityElement.appendChild(btnElement);
+
   return cityElement;
 }
 
@@ -121,7 +127,6 @@ export async function handleSearch(event) {
   let searchValue = searchInput.value;
   if (searchValue === 'Riacho de fevereiro') searchValue = '';
   const citiesPromise = await searchCities(searchValue);
-  console.log(citiesPromise);
   citiesPromise.forEach(async (info) => {
     const objInfo = {
       name: info.name,
