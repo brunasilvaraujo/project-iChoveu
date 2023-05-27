@@ -31,10 +31,11 @@ export const searchCities = async (term) => {
   return fetch(`http://api.weatherapi.com/v1/search.json?${query.toString()}`)
     .then((response) => response.json())
     .then(async (data) => {
-      if (!data.length) return window.alert('Nenhuma cidade encontrada');
-      let arrayData = data.map((item) => getWeatherByCity(item.url));
-      arrayData = await Promise.all(arrayData);
-      return arrayData;
+      if (!data.length) {
+        window.alert('Nenhuma cidade encontrada');
+        return [];
+      }
+      return data;
     })
     .catch((error) => {
       return error.message;

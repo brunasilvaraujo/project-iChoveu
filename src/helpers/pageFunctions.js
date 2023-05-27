@@ -1,4 +1,4 @@
-import { searchCities } from './weatherAPI';
+import { getWeatherByCity, searchCities } from './weatherAPI';
 
 /**
  * Cria um elemento HTML com as informações passadas
@@ -77,7 +77,7 @@ export function showForecast(forecastList) {
  * Recebe um objeto com as informações de uma cidade e retorna um elemento HTML
  */
 export function createCityElement(cityInfo) {
-  const { name, country, temp, condition, icon /* , url */ } = cityInfo;
+  const { name, country, temp, condition, icon, url } = cityInfo;
 
   const cityElement = createElement('li', 'city');
 
@@ -101,9 +101,12 @@ export function createCityElement(cityInfo) {
   infoContainer.appendChild(tempContainer);
   infoContainer.appendChild(iconElement);
 
+  const btnElement = createElement('button', 'city-forecast-button', 'Ver previsão');
+  // btnElement.id = `id-${i}`
+
   cityElement.appendChild(headingElement);
   cityElement.appendChild(infoContainer);
-
+  cityElement.appendChild(btnElement);
   return cityElement;
 }
 
@@ -115,7 +118,19 @@ export async function handleSearch(event) {
   clearChildrenById('cities');
 
   const searchInput = document.getElementById('search-input');
-  const searchValue = searchInput.value;
+  let searchValue = searchInput.value;
+  if (searchValue === 'Riacho de fevereiro') searchValue = '';
   const citiesPromise = await searchCities(searchValue);
   console.log(citiesPromise);
+  citiesPromise.forEach(async (info) => {
+    const objInfo = {
+      name: info.name,
+      country: info.country,
+      url: info.url,
+    };
+    const objInfo2 = await getWeatherByCity(info.url);
+    const card = createCityElement({ ...objInfo, ...objInfo2 });
+    const ulPai = document.querySelector('#cities');
+    ulPai.appendChild(card);
+  });
 }
